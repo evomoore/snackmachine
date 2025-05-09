@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: snackmachine-staging
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: staging
+      - key: PORT
+        value: 3000
+      - key: MONGODB_URI
+        sync: false
+    autoDeploy: true
+    branch: main
+
+  - type: web
+    name: snackmachine-prod
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: MONGODB_URI
+        sync: false
+    autoDeploy: false
+    branch: main 
