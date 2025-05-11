@@ -59,13 +59,11 @@ router.put('/:slug', async (req, res) => {
 // Delete article
 router.delete('/:slug', async (req, res) => {
   try {
-    const article = await Article.findOne({ slug: req.params.slug });
+    const article = await Article.findOneAndDelete({ slug: req.params.slug });
     if (!article) {
       return res.status(404).json({ message: 'Article not found' });
     }
-
-    await article.remove();
-    res.json({ message: 'Article deleted' });
+    res.json({ message: 'Article deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
