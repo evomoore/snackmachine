@@ -5,7 +5,16 @@ const Article = require('../models/Article');
 // Get all articles
 router.get('/', async (req, res) => {
   try {
-    const articles = await Article.find();
+    const query = {};
+    if (req.query.category) {
+      query.categories = { 
+        $in: [new RegExp(`^${req.query.category}$`, 'i')]
+      };
+    }
+    if (req.query.slug) {
+      query.slug = req.query.slug;
+    }
+    const articles = await Article.find(query);
     res.json(articles);
   } catch (error) {
     res.status(500).json({ message: error.message });
