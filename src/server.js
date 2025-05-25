@@ -13,6 +13,7 @@ app.use(express.json({ limit: '50mb' }));
 app.use('/api/articles', require('./routes/articles'));
 app.use('/api/categories', require('./routes/categories'));
 app.use('/api/tags', require('./routes/tags'));
+app.use('/api/editor-notes', require('./routes/editorNotes'));
 
 // MongoDB connection
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/cms', {
