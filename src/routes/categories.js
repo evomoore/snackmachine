@@ -27,9 +27,23 @@ router.get('/:slug', async (req, res) => {
 
 // Create category
 router.post('/', async (req, res) => {
-  const category = new Category(req.body);
-
   try {
+    const { name, slug, description, defaultImage } = req.body;
+
+    // Validate defaultImage if provided
+    if (defaultImage) {
+      if (!defaultImage.url) {
+        return res.status(400).json({ message: 'Default image URL is required' });
+      }
+    }
+
+    const category = new Category({
+      name,
+      slug,
+      description,
+      defaultImage
+    });
+
     const newCategory = await category.save();
     res.status(201).json(newCategory);
   } catch (error) {
@@ -45,7 +59,21 @@ router.put('/:slug', async (req, res) => {
       return res.status(404).json({ message: 'Category not found' });
     }
 
-    Object.assign(category, req.body);
+    const { name, slug, description, defaultImage } = req.body;
+
+    // Validate defaultImage if provided
+    if (defaultImage) {
+      if (!defaultImage.url) {
+        return res.status(400).json({ message: 'Default image URL is required' });
+      }
+    }
+
+    // Update fields
+    if (name) category.name = name;
+    if (slug) category.slug = slug;
+    if (description !== undefined) category.description = description;
+    if (defaultImage) category.defaultImage = defaultImage;
+
     const updatedCategory = await category.save();
     res.json(updatedCategory);
   } catch (error) {
@@ -61,10 +89,20 @@ router.delete('/:slug', async (req, res) => {
       return res.status(404).json({ message: 'Category not found' });
     }
 
-    await category.remove();
-    res.json({ message: 'Category deleted' });
+    await Category.deleteOne({ _id: category._id });
+    res.json({ 
+      message: 'Category deleted successfully',
+      deletedCategory: {
+        name: category.name,
+        slug: category.slug
+      }
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Error deleting category:', error);
+    res.status(500).json({ 
+      message: 'Error deleting category',
+      error: error.message 
+    });
   }
 });
 
