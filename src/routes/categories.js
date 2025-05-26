@@ -63,8 +63,9 @@ router.put('/:slug', async (req, res) => {
 
     // Validate defaultImage if provided
     if (defaultImage) {
-      if (!defaultImage.url) {
-        return res.status(400).json({ message: 'Default image URL is required' });
+      // Allow empty strings for both url and alt
+      if (defaultImage.url === undefined) {
+        return res.status(400).json({ message: 'Default image URL field is required' });
       }
     }
 
@@ -76,7 +77,7 @@ router.put('/:slug', async (req, res) => {
     // Handle defaultImage update
     if (defaultImage) {
       category.defaultImage = {
-        url: defaultImage.url,
+        url: defaultImage.url || '',
         alt: defaultImage.alt || ''
       };
     } else if (defaultImage === null) {
