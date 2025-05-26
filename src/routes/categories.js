@@ -72,12 +72,26 @@ router.put('/:slug', async (req, res) => {
     if (name) category.name = name;
     if (slug) category.slug = slug;
     if (description !== undefined) category.description = description;
-    if (defaultImage) category.defaultImage = defaultImage;
+    
+    // Handle defaultImage update
+    if (defaultImage) {
+      category.defaultImage = {
+        url: defaultImage.url,
+        alt: defaultImage.alt || ''
+      };
+    } else if (defaultImage === null) {
+      // Allow removing the default image by sending null
+      category.defaultImage = undefined;
+    }
 
     const updatedCategory = await category.save();
     res.json(updatedCategory);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error('Error updating category:', error);
+    res.status(400).json({ 
+      message: 'Error updating category',
+      error: error.message 
+    });
   }
 });
 
